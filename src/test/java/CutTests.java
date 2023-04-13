@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 
 public class CutTests {
-
     private Cut cut;
     private String inputFile;
     private String outputFile;
