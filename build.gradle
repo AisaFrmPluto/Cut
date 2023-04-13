@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'https://repository.example.com'
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
+    implementation group: 'args4j', name: 'args4j', version: '2.33'
+    implementation group: 'args4j', name: 'args4j-site', version: '2.33'
+}
+
+test {
+    useJUnitPlatform()
+}
