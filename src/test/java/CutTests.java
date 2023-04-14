@@ -2,7 +2,6 @@ import org.example.Cut;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.*;
 
 public class CutTests {
@@ -35,10 +34,10 @@ public class CutTests {
         writeToFile(inputFile);
         cut.run(args);
         Assertions.assertEquals("""
-                b c
-                eee ffff
-                jkl ggg
-                """, readFromFile(outputFile));
+            b c
+            eee ffff
+            jkl ggg
+            """, readFromFile(outputFile));
     }
 
     @Test

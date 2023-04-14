@@ -25,7 +25,7 @@ public class Cut {
     private String range;
 
     public Cut() {
-        this.isCharBased = true;
+        this.isCharBased = false;
         this.isWordBased = false;
     }
 
@@ -60,18 +60,32 @@ public class Cut {
                     if (isCharBased) {
                         start = Math.max(start, 0);
                         end = Math.min(end, line.length());
+                        line = line.substring(start, end);
                     } else if (isWordBased) {
-                        String[] words = line.split("\\s+");
-                        start = Math.max(start - 1, 0);
-                        end = Math.min(end, words.length) + 1;
-                        end = (end == 0) ? 0 : words[end - 1].length() + ((end < words.length) ? 1 : 0);
-                    }
+                        String[] words = line.trim().split("\\s+");
+                        StringBuilder sb = new StringBuilder();
+                        start = Integer.parseInt(parts[0]) - 1;
+                        end = (parts.length == 1) ? words.length : Integer.parseInt(parts[1]);
 
+                        start = Math.max(start, 0);
+                        end = Math.min(end, words.length);
+
+                        if (start <= end) {
+                            for (int i = start; i < end; i++) {
+                                sb.append(words[i]);
+                                if (i < end - 1) {
+                                    sb.append(" ");
+                                }
+                            }
+                            line = sb.toString();
+                        } else {
+                            line = "";
+                        }
+                    }
                     if (start > end) {
                         throw new IllegalArgumentException("Invalid range: " + range);
                     }
 
-                    line = line.substring(start, end);
                 }
                 writer.write(line);
                 writer.newLine();
