@@ -2,6 +2,7 @@ import org.example.Cut;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.io.*;
 
 public class CutTests {
@@ -18,26 +19,62 @@ public class CutTests {
 
     @Test
     public void testCharBasedCut() throws IOException {
-        String[] args = {"-c", "-o", outputFile, inputFile, "1-3"};
+        String[] args1 = {"-c", "-o", outputFile, inputFile, "2-3"};
         writeToFile(inputFile);
-        cut.run(args);
+        cut.run(args1);
         Assertions.assertEquals("""
-                a b
-                dd\s
-                ghi
+                ir
+                ec
+                hi
+                """, readFromFile(outputFile));
+
+        String[] args2 = {"-c", "-o", outputFile, inputFile, "3"};
+        writeToFile(inputFile);
+        cut.run(args2);
+        Assertions.assertEquals("""
+                rst second third
+                cond third fourth fifth
+                ird fourth fifth sixth
+                """, readFromFile(outputFile));
+
+        String[] args3 = {"-c", "-o", outputFile, inputFile, "-3"};
+        writeToFile(inputFile);
+        cut.run(args3);
+        Assertions.assertEquals("""
+                fir
+                sec
+                thi
                 """, readFromFile(outputFile));
     }
 
     @Test
     public void testWordBasedCut() throws IOException {
-        String[] args = {"-w", "-o", outputFile, inputFile, "2-3"};
+        String[] args1 = {"-w", "-o", outputFile, inputFile, "2-3"};
         writeToFile(inputFile);
-        cut.run(args);
+        cut.run(args1);
         Assertions.assertEquals("""
-            b c
-            eee ffff
-            jkl ggg
-            """, readFromFile(outputFile));
+                second third
+                third fourth
+                fourth fifth
+                """, readFromFile(outputFile));
+
+        String[] args2 = {"-w", "-o", outputFile, inputFile, "3"};
+        writeToFile(inputFile);
+        cut.run(args2);
+        Assertions.assertEquals("""
+                third
+                fourth fifth
+                fifth sixth
+                """, readFromFile(outputFile));
+
+        String[] args3 = {"-w", "-o", outputFile, inputFile, "-3"};
+        writeToFile(inputFile);
+        cut.run(args3);
+        Assertions.assertEquals("""
+                first second third
+                second third fourth
+                third fourth fifth
+                """, readFromFile(outputFile));
     }
 
     @Test
@@ -46,15 +83,15 @@ public class CutTests {
         writeToFile(inputFile);
         cut.run(args);
         Assertions.assertEquals("""
-                a b c
-                dd eee ffff
-                ghi jkl ggg vvv
+                first second third
+                second third fourth fifth
+                third fourth fifth sixth
                 """, readFromFile(outputFile));
     }
 
     private void writeToFile(String fileName) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write("a b c\ndd eee ffff\nghi jkl ggg vvv\n");
+            writer.write("first second third\nsecond third fourth fifth\nthird fourth fifth sixth\n");
         }
     }
 

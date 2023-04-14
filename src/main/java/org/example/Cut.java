@@ -46,16 +46,24 @@ public class Cut {
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)))) {
 
             String line;
-            while ((line = reader.readLine()) != null) { // Use the while loop condition to check for end-of-file
+            while ((line = reader.readLine()) != null) {
 
                 if (range != null) {
-                    String[] parts = range.split("-");
-                    if (parts.length == 0 || parts.length > 2) {
-                        throw new IllegalArgumentException("Invalid range format: " + range);
+                    int start, end;
+                    if (range.startsWith("-")) {
+                        // -K
+                        start = 0;
+                        end = Integer.parseInt(range.substring(1));
+                    } else if (range.contains("-")) {
+                        // N-K
+                        String[] parts = range.split("-");
+                        start = Integer.parseInt(parts[0]) - 1;
+                        end = Integer.parseInt(parts[1]);
+                    } else {
+                        // N
+                        start = Integer.parseInt(range) - 1;
+                        end = line.length();
                     }
-
-                    int start = Integer.parseInt(parts[0]) - 1;
-                    int end = (parts.length == 1) ? line.length() : Integer.parseInt(parts[1]);
 
                     if (isCharBased) {
                         start = Math.max(start, 0);
@@ -63,29 +71,21 @@ public class Cut {
                         line = line.substring(start, end);
                     } else if (isWordBased) {
                         String[] words = line.trim().split("\\s+");
-                        StringBuilder sb = new StringBuilder();
-                        start = Integer.parseInt(parts[0]) - 1;
-                        end = (parts.length == 1) ? words.length : Integer.parseInt(parts[1]);
-
                         start = Math.max(start, 0);
                         end = Math.min(end, words.length);
-
-                        if (start <= end) {
-                            for (int i = start; i < end; i++) {
-                                sb.append(words[i]);
-                                if (i < end - 1) {
-                                    sb.append(" ");
-                                }
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = start; i < end; i++) {
+                            sb.append(words[i]);
+                            if (i < end - 1) {
+                                sb.append(" ");
                             }
-                            line = sb.toString();
-                        } else {
-                            line = "";
                         }
+                        line = sb.toString();
                     }
+
                     if (start > end) {
                         throw new IllegalArgumentException("Invalid range: " + range);
                     }
-
                 }
                 writer.write(line);
                 writer.newLine();
@@ -97,6 +97,5 @@ public class Cut {
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
         }
-
     }
 }
