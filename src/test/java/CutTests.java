@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.util.Scanner;
 
 public class CutTests {
     private Cut cut;
@@ -18,7 +19,7 @@ public class CutTests {
     }
 
     @Test
-    public void testCharBasedCut() throws IOException {
+    public void testCharBasedCutNK() throws IOException {
         String[] args1 = {"-c", "-o", outputFile, inputFile, "2-3"};
         writeToFile(inputFile);
         cut.run(args1);
@@ -27,7 +28,10 @@ public class CutTests {
                 ec
                 hi
                 """, readFromFile(outputFile));
+    }
 
+    @Test
+    public void testCharBasedCutN() throws IOException {
         String[] args2 = {"-c", "-o", outputFile, inputFile, "3"};
         writeToFile(inputFile);
         cut.run(args2);
@@ -36,19 +40,10 @@ public class CutTests {
                 cond third fourth fifth
                 ird fourth fifth sixth
                 """, readFromFile(outputFile));
-
-        String[] args3 = {"-c", "-o", outputFile, inputFile, "-3"};
-        writeToFile(inputFile);
-        cut.run(args3);
-        Assertions.assertEquals("""
-                fir
-                sec
-                thi
-                """, readFromFile(outputFile));
     }
 
     @Test
-    public void testWordBasedCut() throws IOException {
+    public void testWordBasedCutNK() throws IOException {
         String[] args1 = {"-w", "-o", outputFile, inputFile, "2-3"};
         writeToFile(inputFile);
         cut.run(args1);
@@ -57,7 +52,10 @@ public class CutTests {
                 third fourth
                 fourth fifth
                 """, readFromFile(outputFile));
+    }
 
+    @Test
+    public void testWordBasedCutN() throws IOException {
         String[] args2 = {"-w", "-o", outputFile, inputFile, "3"};
         writeToFile(inputFile);
         cut.run(args2);
@@ -66,15 +64,43 @@ public class CutTests {
                 fourth fifth
                 fifth sixth
                 """, readFromFile(outputFile));
+    }
 
-        String[] args3 = {"-w", "-o", outputFile, inputFile, "-3"};
-        writeToFile(inputFile);
-        cut.run(args3);
-        Assertions.assertEquals("""
-                first second third
-                second third fourth
-                third fourth fifth
-                """, readFromFile(outputFile));
+    @Test
+    public void testConsole() throws IOException {
+        String[] args = new String[5];
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter cut option (-c or -w): ");
+        if (scanner.hasNextLine()) args[0] = System.console().readLine();
+
+        System.out.print("Enter output file option (-o outputFile or press Enter to skip): ");
+        if (scanner.hasNextLine()) {
+            String outputFileOption = System.console().readLine();
+            if ("-o".equals(outputFileOption) && scanner.hasNextLine()) {
+                args[1] = outputFileOption;
+                args[2] = System.console().readLine();
+            } else {
+                args[1] = "";
+                args[2] = "";
+            }
+        }
+
+        System.out.print("Enter input file name: ");
+        if (scanner.hasNextLine()) args[3] = System.console().readLine();
+
+        System.out.print("Enter cut positions: ");
+        if (scanner.hasNextLine()) args[4] = System.console().readLine();
+
+        if (args[0] == null || args[3] == null || args[4] == null) {
+            System.err.println("Missing input. Please provide all the required arguments.");
+            return;
+        }
+        writeToFile(args[3]);
+        cut.run(args);
+
+        System.out.println("Output:");
+        System.out.println(outputFile);
     }
 
     @Test

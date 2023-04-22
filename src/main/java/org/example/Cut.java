@@ -18,15 +18,15 @@ public class Cut {
     @Option(name = "-w", usage = "by words")
     private boolean isWordBased;
 
-    @Argument(index = 0, usage = "Input file name")
+    @Argument(usage = "Input file name")
     private String inputFile;
 
     @Argument(index = 1, usage = "Range")
     private String range;
 
     public Cut() {
-        this.isCharBased = false;
-        this.isWordBased = false;
+        isCharBased = false;
+        isWordBased = false;
     }
 
     public static void main(String[] args) {
@@ -50,11 +50,7 @@ public class Cut {
 
                 if (range != null) {
                     int start, end;
-                    if (range.startsWith("-")) {
-                        // -K
-                        start = 0;
-                        end = Integer.parseInt(range.substring(1));
-                    } else if (range.contains("-")) {
+                    if (range.contains("-")) {
                         // N-K
                         String[] parts = range.split("-");
                         start = Integer.parseInt(parts[0]) - 1;
